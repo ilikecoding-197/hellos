@@ -12,6 +12,20 @@ run it with `-h` or `--help` to check them out.
 To add a new language, follow these steps:
 
 1. Add the code file to `src/`
+2. Make sure you put this kind of comment at the top of the file:
+
+   ```python
+   # hello-world language
+   # author:   [YOUR GITHUB NAME]
+   # language: [LANGUAGE]
+   #
+   # hello-world created by ilikecoding-197
+   # see README.md in project root
+   ```
+
+   Replace the info in `author` and `language`! Make sure to use
+   the exact format, but of course change the comment symbol
+   if needed.
 2. Edit `run.py`. Add the tool to compile/interpret your language
    into the TOOLS dictionary (format: `[tool]: [exec_name]`),
    add the language next to the others in the `main` function.
