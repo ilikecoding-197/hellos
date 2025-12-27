@@ -53,6 +53,54 @@ def run_command(cmd: str, lang: str, action: str = "run") -> None:
 run = partial(run_command, action="run")
 compile = partial(run_command, action="compilation")
 
+# Intergrated Brainfuck runner because its so simple
+# we might as well include it in here
+def run_brainfuck(file_path):
+    with open(file_path, mode="r") as f:
+        code = f.read()
+        
+    array = [0] * 10 # we dont need much space
+    pointer_location = 0
+    instruction_pointer = 0
+    output = ""
+    
+    while instruction_pointer < len(code):
+        command = code[instruction_pointer]
+
+        if command == '>':
+            pointer_location += 1
+        elif command == '<':
+            pointer_location -= 1
+        elif command == '+':
+            array[pointer_location] = (array[pointer_location] + 1) % 256
+        elif command == '-':
+            array[pointer_location] = (array[pointer_location] - 1) % 256
+        elif command == '.':
+            output += chr(array[pointer_location])
+        # no , command - we dont need it
+        elif command == '[':
+            if array[pointer_location] == 0:
+                loop_count = 1
+                while loop_count > 0:
+                    instruction_pointer += 1
+                    if code[instruction_pointer] == '[':
+                        loop_count += 1
+                    elif code[instruction_pointer] == ']':
+                        loop_count -= 1
+        elif command == ']':
+            if array[pointer_location] != 0:
+                loop_count = 1
+                while loop_count > 0:
+                    instruction_pointer -= 1
+                    if code[instruction_pointer] == ']':
+                        loop_count += 1
+                    elif code[instruction_pointer] == '[':
+                        loop_count -= 1
+        
+        instruction_pointer += 1
+
+    return output
+
 # Constants
 BUILD = "build"
 OUT   = "out"
@@ -75,7 +123,8 @@ LANG_NAMES = {
     "js"  : "JavaScript",
     "sh"  : "Shell",
     "lua" : "Lua",
-    "ruby": "Ruby"
+    "ruby": "Ruby",
+    "bf"  : "Brainfuck"
 }
 
 GOOD_FILE = Path("good.txt")
@@ -172,6 +221,12 @@ def main() -> None:
     # Shell
     if available.get("sh"):
         run(f"{TOOLS['sh']} {SRC}/hello.sh", "sh")
+        
+    # Brainfuck
+    bf_out = run_brainfuck(f"{SRC}/hello.bf")
+    with open(f"{OUT}/bf.txt", mode="w") as f:
+        f.write(bf_out)
+    msg("Assuming BF ran correctly")
 
     msg("\nDone, checking now.")
     
