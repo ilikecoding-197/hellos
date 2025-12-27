@@ -12,8 +12,8 @@ and finally `all.sh` runs both `run.sh` and `check.sh`.
 ## Adding new languages
 To add a new language, follow these steps:
 
-	1. Add the code file to `src/`
-	2. Edit run.sh to compile/run your file
+1. Add the code file to `src/`
+2. Edit run.sh to compile/run your file
 
 `check.sh` already checks out for any language output, so you dont
 have to worry about that.
