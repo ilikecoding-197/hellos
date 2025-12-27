@@ -29,7 +29,8 @@ To add a new language, follow these steps:
 2. Edit `run.py`. Add the tool to compile/interpret your language
    into the TOOLS dictionary (format: `[tool]: [exec_name]`),
    add the language next to the others in the `main` function.
-   Make sure to test the changes.
+   Also, add a human-friendly name into the LANG_NAMES
+   dictionary for your language. Make sure to test the changes!
 3. Add instructions in `README.md` on how to install the tool
    for your language
 

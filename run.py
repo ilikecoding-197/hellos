@@ -46,9 +46,9 @@ def run_command(cmd: str, lang: str, action: str = "run") -> None:
     try:
         with out_file.open("w") as f:
             subprocess.run(cmd, shell=True, check=True, stdout=f, stderr=subprocess.STDOUT)
-        msg(f"{lang} {action} succeeded")
+        msg(f"{LANG_NAMES[lang]} {action} succeeded")
     except subprocess.CalledProcessError:
-        msg(f"{lang} {action} failed")
+        msg(f"{LANG_NAMES[lang]} {action} failed")
      
 run = partial(run_command, action="run")
 compile = partial(run_command, action="compilation")
@@ -66,6 +66,16 @@ TOOLS = {
     "sh"   : "sh",
     "lua"  : "lua",
     "ruby" : "ruby"
+}
+
+LANG_NAMES = {
+    "c"   : "C",
+    "cpp" : "C++",
+    "py"  : "Python",
+    "js"  : "JavaScript",
+    "sh"  : "Shell",
+    "lua" : "Lua",
+    "ruby": "Ruby"
 }
 
 GOOD_FILE = Path("good.txt")
@@ -177,10 +187,10 @@ def main() -> None:
             stdout=subprocess.DEVNULL
         )
         if result.returncode == 0:
-            msg(f"{lang} valid")
+            msg(f"{LANG_NAMES[lang]} valid")
             valid_langs += 1
         else:
-            msg(f"{lang} invalid")
+            msg(f"{LANG_NAMES[lang]} invalid")
             
     if not args.quiet: print()
     print(f"{valid_langs}/{len(all_langs)} languages are valid")
