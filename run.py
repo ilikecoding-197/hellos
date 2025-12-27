@@ -46,12 +46,15 @@ def run_command(cmd: str, lang: str, action: str = "run") -> None:
     try:
         with out_file.open("w") as f:
             subprocess.run(cmd, shell=True, check=True, stdout=f, stderr=subprocess.STDOUT)
-        msg(f"{LANG_NAMES[lang]} {action} succeeded")
+        msg(f"{lang_name(lang)} {action} succeeded")
     except subprocess.CalledProcessError:
-        msg(f"{LANG_NAMES[lang]} {action} failed")
+        msg(f"{lang_name(lang)} {action} failed")
      
 run = partial(run_command, action="run")
 compile = partial(run_command, action="compilation")
+    
+def lang_name(lang):
+    return LANG_NAMES.get(lang, lang)
 
 # Intergrated Brainfuck runner because its so simple
 # we might as well include it in here
@@ -184,9 +187,9 @@ def main() -> None:
         has = have(exe)
 
         if has:
-            msg(f"tool for {tool} exists")
+            msg(f"tool for {lang_name(tool)} exists")
         else:
-            msg(f"tool for {tool} doesn't exist")
+            msg(f"tool for {lang_name(tool)} doesn't exist")
 
         available[tool] = has
 
@@ -242,10 +245,10 @@ def main() -> None:
             stdout=subprocess.DEVNULL
         )
         if result.returncode == 0:
-            msg(f"{LANG_NAMES[lang]} valid")
+            msg(f"{lang_name(lang)} valid")
             valid_langs += 1
         else:
-            msg(f"{LANG_NAMES[lang]} invalid")
+            msg(f"{lang_name(lang)} invalid")
             
     if not args.quiet: print()
     print(f"{valid_langs}/{len(all_langs)} languages are valid")
