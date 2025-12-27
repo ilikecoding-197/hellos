@@ -59,12 +59,13 @@ OUT   = "out"
 SRC   = "src"
 
 TOOLS = {
-    "c"   : "gcc",
-    "cpp" : "g++",
-    "py"  : "python3",
-    "js"  : "node",
-    "sh"  : "sh",
-    "lua" : "lua"
+    "c"    : "gcc",
+    "cpp"  : "g++",
+    "py"   : "python3",
+    "js"   : "node",
+    "sh"   : "sh",
+    "lua"  : "lua",
+    "ruby" : "ruby"
 }
 
 GOOD_FILE = Path("good.txt")
@@ -149,6 +150,10 @@ def main() -> None:
     # Lua
     if available.get("lua"):
         run(f"{TOOLS['lua']} {SRC}/hello.lua", "lua")
+
+    # Ruby
+    if available.get("ruby"):
+        run(f"{TOOLS['ruby']} {SRC}/hello.rb", "ruby")
 
     # JavaScript
     if available.get("js"):

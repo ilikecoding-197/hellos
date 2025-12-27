@@ -41,6 +41,7 @@ To add a new language, follow these steps:
 | Python   | python3                       |
 | JS       | node                          |
 | Lua      | lua (any version should work) |
+| Ruby     | ruby                          |
 
 Search online on how to install each tool, if your package
 manager doesn't have it under the tool name (e.g. `sudo apt install node`
