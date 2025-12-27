@@ -76,7 +76,7 @@ def main() -> None:
         description="Run/check all hello world programs",
         prog="run",
         epilog="""
-        "hellos" made by ilikecoding-197
+        "hello-world" made by ilikecoding-197
         See README.md for more information
         """
     )
