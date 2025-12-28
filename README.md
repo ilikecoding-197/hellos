@@ -4,9 +4,27 @@ Project simply running a "Hello, world!" program across multiple languages,
 with a python script to run them.
 
 ## Running
-Simply run `run.py` (you can run it as `./run.py`) to compile/run
-the languages it can. There are a couple options you can use with it,
-run it with `-h` or `--help` to check them out.
+1. Clone the repo:
+
+   ```bash
+   git clone https://github.com/ilikecoding-197/hello-world.git
+   ```
+
+   If you dont have Git installed, install it before.
+2. Make sure you have Python3 and venv installed on it, create one, and install
+   packages:
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate # or whatever it is on your OS
+   pip install -r requirements.txt
+   ```
+3. Finally, run the main script (most of the time you want just `./run.py`)
+   ```bash
+   ./run.py    # normal run
+   ./run.py -q # quiet
+   ./run.py -c # clean, delete build and out
+   ./run.py -h # get help
+   ```
 
 ## Adding new languages
 First, create a fork of this repo. Then follow these steps
@@ -48,6 +66,9 @@ to get your language in there.
    add the language next to the others in the `main` function.
    Also, add a human-friendly name into the LANG_NAMES
    dictionary for your language. Make sure to test the changes!
+   And actually, once another thing - make sure to add code
+   to increment the total counter for the compiling/running
+   progress bar (another if for your language)
 4. Add instructions in `README.md` on how to install the tool
    for your language
 

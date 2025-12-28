@@ -22,10 +22,15 @@ import shutil
 import subprocess
 import argparse
 import sys
+from rich.console import Console
+from rich.progress import Progress
+from rich_argparse import RichHelpFormatter
 from functools import partial
 from pathlib import Path
+from tqdm import tqdm
 
 msg = None
+console = Console()
 
 # Helpers
 def have(tool_name: str) -> bool:
@@ -63,9 +68,9 @@ def run_command(cmd: str, lang: str, action: str = "run") -> None:
     try:
         with out_file.open("w") as f:
             subprocess.run(cmd, shell=True, check=True, stdout=f, stderr=subprocess.STDOUT)
-        msg(f"{lang_name(lang)} {action} succeeded")
+        msg(f"[blue]{lang_name(lang)} {action} [green]succeeded")
     except subprocess.CalledProcessError:
-        msg(f"{lang_name(lang)} {action} failed")
+        msg(f"[blue]{lang_name(lang)} {action} [red]failed")
      
 run = partial(run_command, action="run")
 compile = partial(run_command, action="compilation")
@@ -159,7 +164,8 @@ def main() -> None:
         epilog="""
         "hello-world" made by ilikecoding-197
         See README.md for more information
-        """
+        """,
+        formatter_class=RichHelpFormatter
     )
     
     parser.add_argument(
@@ -184,91 +190,125 @@ def main() -> None:
     if args.quiet:
         msg = lambda *a, **k: None
     else:
-        msg = print
+        msg = lambda *a, **k: console.print(*a, **k)
 
     # --clean
     if args.clean:
         delete_folder(BUILD)
         delete_folder(OUT)
 
-        msg("build/out folders cleaned")
+        msg("[green bold]build/out folders cleaned")
         return
         
     prepare_folder(BUILD)
     prepare_folder(OUT)
 
-    msg("Checking for language compilers/interpreters...")
-    available = {}
+    with Progress(transient=True) as progress:
+        global console
+        console = progress.console
 
-    for tool, exe in TOOLS.items():
-        has = have(exe)
+        task = progress.add_task("[bold green]Checking for tools...", total=len(TOOLS))
+        msg("[bold]Checking for language compilers/interpreters...")
+        available = {}
 
-        if has:
-            msg(f"tool for {lang_name(tool)} exists")
-        else:
-            msg(f"tool for {lang_name(tool)} doesn't exist")
+        for tool, exe in TOOLS.items():
+            has = have(exe)
 
-        available[tool] = has
+            if has:
+                msg(f"tool for [blue]{lang_name(tool)} [yellow]exists")
+            else:
+                msg(f"tool for [blue]{lang_name(tool)} [red]doesn't exist")
 
-    msg("\nDone, compiling/running now")
+            available[tool] = has
+            progress.update(task, advance=1)
 
-    # C
-    if available.get("c"):
-        compile(f"{TOOLS['c']} -o {BUILD}/c src/hello.c", "c")
-        run(f"{BUILD}/c", "c")
+        progress.remove_task(task)
+        msg("\n[bold]Done, compiling/running now")
 
-    # CPP
-    if available.get("cpp"):
-        compile(f"{TOOLS['cpp']} -o {BUILD}/cpp src/hello.cpp", "cpp")
-        run(f"{BUILD}/cpp", "cpp")
+        # compute totals
+        total = 1 # integrated BF
+        if available.get("c"): total += 2
+        if available.get("cpp"): total += 2
+        if available.get("py"): total += 1
+        if available.get("lua"): total += 1
+        if available.get("ruby"): total += 1
+        if available.get("js"): total += 1
+        if available.get("sh"): total += 1
 
-    # Python
-    if available.get("py"):
-        run(f"{TOOLS['py']} {SRC}/hello.py", "py")
 
-    # Lua
-    if available.get("lua"):
-        run(f"{TOOLS['lua']} {SRC}/hello.lua", "lua")
-
-    # Ruby
-    if available.get("ruby"):
-        run(f"{TOOLS['ruby']} {SRC}/hello.rb", "ruby")
-
-    # JavaScript
-    if available.get("js"):
-        run(f"{TOOLS['js']} {SRC}/hello.js", "js")
-
-    # Shell
-    if available.get("sh"):
-        run(f"{TOOLS['sh']} {SRC}/hello.sh", "sh")
+        task = progress.add_task("[bold green]Compiling/running...", total=total)
         
-    # Brainfuck
-    bf_out = run_brainfuck(SRC / "hello.bf")
-    with (OUT / "bf.txt").open("w") as f:
-        f.write(bf_out)
-    msg("Assuming BF ran correctly")
+        # C
+        if available.get("c"):
+            compile(f"{TOOLS['c']} -o {BUILD}/c src/hello.c", "c")
+            progress.update(task, advance=1)
+            run(f"{BUILD}/c", "c")
+            progress.update(task, advance=1)
 
-    msg("\nDone, checking now.")
-    
-    all_langs = []
-    valid_langs = 0
-    
-    for file in OUT.glob("*.txt"):
-        lang = file.stem  # filename without .txt
-        all_langs.append(lang)
-    
-        result = subprocess.run(
-            ["diff", str(file), str(GOOD_FILE)],
-            stdout=subprocess.DEVNULL
-        )
-        if result.returncode == 0:
-            msg(f"{lang_name(lang)} valid")
-            valid_langs += 1
-        else:
-            msg(f"{lang_name(lang)} invalid")
+        # CPP
+        if available.get("cpp"):
+            compile(f"{TOOLS['cpp']} -o {BUILD}/cpp src/hello.cpp", "cpp")
+            progress.update(task, advance=1)
+            run(f"{BUILD}/cpp", "cpp")
+            progress.update(task, advance=1)
+
+        # Python
+        if available.get("py"):
+            run(f"{TOOLS['py']} {SRC}/hello.py", "py")
+            progress.update(task, advance=1)
+
+        # Lua
+        if available.get("lua"):
+            run(f"{TOOLS['lua']} {SRC}/hello.lua", "lua")
+            progress.update(task, advance=1)
+
+        # Ruby
+        if available.get("ruby"):
+            run(f"{TOOLS['ruby']} {SRC}/hello.rb", "ruby")
+            progress.update(task, advance=1)
+
+        # JavaScript
+        if available.get("js"):
+            run(f"{TOOLS['js']} {SRC}/hello.js", "js")
+            progress.update(task, advance=1)
+        
+        # Shell
+        if available.get("sh"):
+            run(f"{TOOLS['sh']} {SRC}/hello.sh", "sh")
+            progress.update(task, advance=1)
             
-    if not args.quiet: print()
-    print(f"{valid_langs}/{len(all_langs)} languages are valid")
+        # Brainfuck
+        bf_out = run_brainfuck(SRC / "hello.bf")
+        with (OUT / "bf.txt").open("w") as f:
+            f.write(bf_out)
+        msg("[gray]Assuming BF ran correctly")
+        progress.update(task, advance=1)
+
+        msg("\n[bold]Done, checking now.")
+        progress.remove_task(task)
+        
+        all_langs = []
+        valid_langs = 0
+        glob = list(OUT.glob("*.txt"))
+
+        task = progress.add_task("Checking output...", total=len(glob))
+        for file in glob:
+            lang = file.stem  # filename without .txt
+            all_langs.append(lang)
+        
+            result = subprocess.run(
+                ["diff", str(file), str(GOOD_FILE)],
+                stdout=subprocess.DEVNULL
+            )
+            if result.returncode == 0:
+                msg(f"[blue]{lang_name(lang)} [green]valid")
+                valid_langs += 1
+            else:
+                msg(f"[blue]{lang_name(lang)} [red]invalid")
+
+            progress.update(task, advance=1)
+        progress.remove_task(task)
+    console.print(f"[blue]{valid_langs}/{len(all_langs)}[/] languages are valid")
 
 if __name__ == "__main__":
     main()
