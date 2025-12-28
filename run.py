@@ -15,7 +15,7 @@ def have(tool_name: str) -> bool:
     """Check if a command-line tool exists in PATH."""
     return shutil.which(tool_name) is not None
 
-def prepare_folder(path: str) -> None:
+def prepare_folder(path: Path) -> None:
     """
     Prepare a folder.
 
@@ -23,7 +23,7 @@ def prepare_folder(path: str) -> None:
     If it doesn't, create it.
     """
     
-    folder = Path(path)
+    folder = path
     if folder.exists():
         # Delete everything inside
         for item in folder.iterdir():
@@ -36,13 +36,13 @@ def prepare_folder(path: str) -> None:
 
 def delete_folder(path: str) -> None:
     """Delete a folder."""
-    folder = Path(path)
+    folder = path
 
     if folder.exists() and folder.is_dir():
         shutil.rmtree(folder)
 
 def run_command(cmd: str, lang: str, action: str = "run") -> None:
-    out_file = Path(OUT) / f"{lang}.txt"
+    out_file = OUT / f"{lang}.txt"
     try:
         with out_file.open("w") as f:
             subprocess.run(cmd, shell=True, check=True, stdout=f, stderr=subprocess.STDOUT)
@@ -58,8 +58,8 @@ def lang_name(lang):
 
 # Intergrated Brainfuck runner because its so simple
 # we might as well include it in here
-def run_brainfuck(file_path):
-    with open(file_path, mode="r") as f:
+def run_brainfuck(path: Path):
+    with path.open("r") as f:
         code = f.read()
         
     array = [0] * 10 # we dont need much space
@@ -105,9 +105,9 @@ def run_brainfuck(file_path):
     return output
 
 # Constants
-BUILD = "build"
-OUT   = "out"
-SRC   = "src"
+BUILD = Path("build")
+OUT   = Path("out")
+SRC   = Path("src")
 
 TOOLS = {
     "c"    : "gcc",
@@ -226,8 +226,8 @@ def main() -> None:
         run(f"{TOOLS['sh']} {SRC}/hello.sh", "sh")
         
     # Brainfuck
-    bf_out = run_brainfuck(f"{SRC}/hello.bf")
-    with open(f"{OUT}/bf.txt", mode="w") as f:
+    bf_out = run_brainfuck(SRC / "hello.bf")
+    with (OUT / "bf.txt").open("w") as f:
         f.write(bf_out)
     msg("Assuming BF ran correctly")
 
@@ -236,7 +236,7 @@ def main() -> None:
     all_langs = []
     valid_langs = 0
     
-    for file in Path(OUT).glob("*.txt"):
+    for file in OUT.glob("*.txt"):
         lang = file.stem  # filename without .txt
         all_langs.append(lang)
     
