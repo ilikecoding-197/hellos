@@ -22,11 +22,27 @@ to get your language in there.
    #
    # hello-world created by ilikecoding-197
    # see README.md in project root
+   #
+   # hello-world - several hello world programs in different languages
+   # Copyright (C) 2025 ilikecoding-197
+   # 
+   # This program is free software: you can redistribute it and/or modify
+   # it under the terms of the GNU General Public License as published by
+   # the Free Software Foundation, either version 3 of the License, or
+   # (at your option) any later version.
+   # 
+   # This program is distributed in the hope that it will be useful,
+   # but WITHOUT ANY WARRANTY; without even the implied warranty of
+   # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   # GNU General Public License for more details.
+   # 
+   # You should have received a copy of the GNU General Public License
+   # along with this program.  If not, see <https://www.gnu.org/licenses/>.
    ```
 
    Replace the info in `author` and `language`! Make sure to use
    the exact format, but of course change the comment symbol
-   if needed.
+   if needed. Include the license.
 3. Edit `run.py`. Add the tool to compile/interpret your language
    into the TOOLS dictionary (format: `[tool]: [exec_name]`),
    add the language next to the others in the `main` function.
