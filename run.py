@@ -27,7 +27,6 @@ from rich.progress import Progress
 from rich_argparse import RichHelpFormatter
 from functools import partial
 from pathlib import Path
-from tqdm import tqdm
 
 msg = None
 console = Console()
