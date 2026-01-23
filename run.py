@@ -125,6 +125,11 @@ def run_brainfuck(path: Path):
 
     return output
 
+GOOD = "Hello, world!\n"
+def is_vaild(file: Path) -> bool:
+    with file.open("r") as f:
+        return f.read() == GOOD
+
 # Constants
 BUILD = Path("build")
 OUT   = Path("out")
@@ -150,8 +155,6 @@ LANG_NAMES = {
     "ruby": "Ruby",
     "bf"  : "Brainfuck"
 }
-
-GOOD_FILE = Path("good.txt")
 
 def main() -> None:
     """Main function."""
@@ -294,12 +297,8 @@ def main() -> None:
         for file in glob:
             lang = file.stem  # filename without .txt
             all_langs.append(lang)
-        
-            result = subprocess.run(
-                ["diff", str(file), str(GOOD_FILE)],
-                stdout=subprocess.DEVNULL
-            )
-            if result.returncode == 0:
+            
+            if is_vaild(file):
                 msg(f"[blue]{lang_name(lang)} [green]valid")
                 valid_langs += 1
             else:
