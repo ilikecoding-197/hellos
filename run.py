@@ -27,6 +27,7 @@ from rich.progress import Progress
 from rich_argparse import RichHelpFormatter
 from functools import partial
 from pathlib import Path
+import bfi
 
 msg = None
 console = Console()
@@ -76,54 +77,6 @@ compile = partial(run_command, action="compilation")
     
 def lang_name(lang):
     return LANG_NAMES.get(lang, lang)
-
-# Intergrated Brainfuck runner because its so simple
-# we might as well include it in here
-def run_brainfuck(path: Path):
-    with path.open("r") as f:
-        code = f.read()
-        
-    array = [0] * 10 # we dont need much space
-    pointer_location = 0
-    instruction_pointer = 0
-    output = ""
-    
-    while instruction_pointer < len(code):
-        command = code[instruction_pointer]
-
-        if command == '>':
-            pointer_location += 1
-        elif command == '<':
-            pointer_location -= 1
-        elif command == '+':
-            array[pointer_location] = (array[pointer_location] + 1) % 256
-        elif command == '-':
-            array[pointer_location] = (array[pointer_location] - 1) % 256
-        elif command == '.':
-            output += chr(array[pointer_location])
-        # no , command - we dont need it
-        elif command == '[':
-            if array[pointer_location] == 0:
-                loop_count = 1
-                while loop_count > 0:
-                    instruction_pointer += 1
-                    if code[instruction_pointer] == '[':
-                        loop_count += 1
-                    elif code[instruction_pointer] == ']':
-                        loop_count -= 1
-        elif command == ']':
-            if array[pointer_location] != 0:
-                loop_count = 1
-                while loop_count > 0:
-                    instruction_pointer -= 1
-                    if code[instruction_pointer] == ']':
-                        loop_count += 1
-                    elif code[instruction_pointer] == '[':
-                        loop_count -= 1
-        
-        instruction_pointer += 1
-
-    return output
 
 GOOD = "Hello, world!\n"
 def is_vaild(file: Path) -> bool:
@@ -237,7 +190,6 @@ def main() -> None:
         if available.get("js"): total += 1
         if available.get("sh"): total += 1
 
-
         task = progress.add_task("[bold green]Compiling/running...", total=total)
         
         # C
@@ -280,10 +232,14 @@ def main() -> None:
             progress.update(task, advance=1)
             
         # Brainfuck
-        bf_out = run_brainfuck(SRC / "hello.bf")
-        with (OUT / "bf.txt").open("w") as f:
-            f.write(bf_out)
-        msg("[gray]Assuming BF ran correctly")
+        try:
+            with (SRC / "hello.bf").open("r") as src:
+                prog = src.read()
+                with (OUT / "bf.txt").open("w") as out:
+                    bfi.interpret(prog, write_byte=(lambda o: out.write(chr(o))))
+            msg(f"[blue]Brainfuck run [green]succeeded")
+        except bfi.BrainfuckSyntaxError:
+            msg(f"[blue]Brainfuck run [red]failed")
         progress.update(task, advance=1)
 
         msg("\n[bold]Done, checking now.")
