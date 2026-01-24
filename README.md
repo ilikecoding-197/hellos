@@ -1,4 +1,4 @@
-# hello-world
+Python# hello-world
 
 Project simply running a "Hello, world!" program across multiple languages,
 with a python script to run them.
@@ -86,6 +86,7 @@ added in the title of that PR.
 | Lua      | lua (any version should work)                               |
 | Ruby     | ruby                                                        |
 | Juila    | `curl -fsSL https://install.julialang.org | sh` in terminal |
+| Lisp     | sbcl                                                        |
 
 Search online on how to install each tool for your distro,
 if your package manager doesn't have it under the tool name

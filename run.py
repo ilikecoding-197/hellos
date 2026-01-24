@@ -96,7 +96,8 @@ TOOLS = {
     "sh"    : "sh",
     "lua"   : "lua",
     "ruby"  : "ruby",
-    "julia" : "julia"
+    "julia" : "julia",
+    "lisp"  : "sbcl"
 }
 
 LANG_NAMES = {
@@ -108,7 +109,8 @@ LANG_NAMES = {
     "lua"   : "Lua",
     "ruby"  : "Ruby",
     "bf"    : "Brainfuck",
-    "julia" : "Julia"
+    "julia" : "Julia",
+    "lisp"  : "Lisp (CommonLisp)"
 }
 
 def main() -> None:
@@ -192,6 +194,7 @@ def main() -> None:
         if available.get("js"): total += 1
         if available.get("sh"): total += 1
         if available.get("julia"): total += 1
+        if available.get("lisp"): total += 1
 
         task = progress.add_task("[bold green]Compiling/running...", total=total)
         
@@ -217,6 +220,11 @@ def main() -> None:
         # Julia
         if available.get("julia"):
             run(f"{TOOLS['julia']} {SRC}/hello.jl", "julia")
+            progress.update(task, advance=1)
+                        
+        # Lisp
+        if available.get("lisp"):
+            run(f"{TOOLS['lisp']} --script {SRC}/hello.lisp", "lisp")
             progress.update(task, advance=1)
 
         # Lua
