@@ -77,14 +77,15 @@ actual repo from your fork. Include the language(s) you
 added in the title of that PR.
 
 ## Tools you might have to install
-| Language | Tool                          |
-|----------|-------------------------------|
-| C        | gcc                           |
-| C++      | g++                           |
-| Python   | python3                       |
-| JS       | node                          |
-| Lua      | lua (any version should work) |
-| Ruby     | ruby                          |
+| Language | Tool                                                        |
+|----------|-------------------------------------------------------------|
+| C        | gcc                                                         |
+| C++      | g++                                                         |
+| Python   | python3                                                     |
+| JS       | node                                                        |
+| Lua      | lua (any version should work)                               |
+| Ruby     | ruby                                                        |
+| Juila    | `curl -fsSL https://install.julialang.org | sh` in terminal |
 
 Search online on how to install each tool for your distro,
 if your package manager doesn't have it under the tool name

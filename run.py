@@ -89,24 +89,26 @@ OUT   = Path("out")
 SRC   = Path("src")
 
 TOOLS = {
-    "c"    : "gcc",
-    "cpp"  : "g++",
-    "py"   : "python3",
-    "js"   : "node",
-    "sh"   : "sh",
-    "lua"  : "lua",
-    "ruby" : "ruby"
+    "c"     : "gcc",
+    "cpp"   : "g++",
+    "py"    : "python3",
+    "js"    : "node",
+    "sh"    : "sh",
+    "lua"   : "lua",
+    "ruby"  : "ruby",
+    "julia" : "julia"
 }
 
 LANG_NAMES = {
-    "c"   : "C",
-    "cpp" : "C++",
-    "py"  : "Python",
-    "js"  : "JavaScript",
-    "sh"  : "Shell",
-    "lua" : "Lua",
-    "ruby": "Ruby",
-    "bf"  : "Brainfuck"
+    "c"     : "C",
+    "cpp"   : "C++",
+    "py"    : "Python",
+    "js"    : "JavaScript",
+    "sh"    : "Shell",
+    "lua"   : "Lua",
+    "ruby"  : "Ruby",
+    "bf"    : "Brainfuck",
+    "julia" : "Julia"
 }
 
 def main() -> None:
@@ -189,6 +191,7 @@ def main() -> None:
         if available.get("ruby"): total += 1
         if available.get("js"): total += 1
         if available.get("sh"): total += 1
+        if available.get("julia"): total += 1
 
         task = progress.add_task("[bold green]Compiling/running...", total=total)
         
@@ -209,6 +212,11 @@ def main() -> None:
         # Python
         if available.get("py"):
             run(f"{TOOLS['py']} {SRC}/hello.py", "py")
+            progress.update(task, advance=1)
+            
+        # Julia
+        if available.get("julia"):
+            run(f"{TOOLS['julia']} {SRC}/hello.jl", "julia")
             progress.update(task, advance=1)
 
         # Lua
