@@ -85,7 +85,7 @@ added in the title of that PR.
 | JS       | node                                                        |
 | Lua      | lua (any version should work)                               |
 | Ruby     | ruby                                                        |
-| Juila    | `curl -fsSL https://install.julialang.org | sh` in terminal |
+| Juila    | `curl -fsSL https://install.julialang.org \| sh` in terminal |
 | Lisp     | sbcl                                                        |
 
 Search online on how to install each tool for your distro,
